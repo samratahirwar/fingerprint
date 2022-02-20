@@ -22,7 +22,7 @@ def points_on_line(line, W):
     del draw
     del im
 
-    dist = lambda (x, y): (x - W / 2) ** 2 + (y - W / 2) ** 2
+    dist = lambda x_y: (x_y[0] - W / 2) ** 2 + (x_y[1] - W / 2) ** 2
 
     return sorted(points, cmp = lambda x, y: dist(x) < dist(y))[:W]
 

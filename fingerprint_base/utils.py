@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw
 import math
 import sobel
 import copy
+from functools import reduce
 
 def apply_kernel_at(get_value, kernel, i, j):
     kernel_size = len(kernel)
@@ -49,7 +50,7 @@ def flatten(ls):
     return reduce(lambda x, y: x + y, ls, [])
 
 def transpose(ls):
-    return map(list, zip(*ls))
+    return list(map(list, list(zip(*ls))))
 
 def gauss(x, y):
     ssigma = 1.0

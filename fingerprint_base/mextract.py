@@ -32,7 +32,7 @@ def gabor(im, W, angles):
     im_load = im.load()
 
     freqs = frequency.freq(im, W, angles)
-    print "computing local ridge frequency done"
+    print("computing local ridge frequency done")
 
     gauss = utils.gauss_kernel(3)
     utils.apply_kernel(freqs, gauss)
@@ -53,7 +53,7 @@ def gabor(im, W, angles):
 def make_thin(im):
     loaded = utils.load_image(im)
     utils.apply_to_each_pixel(loaded, lambda x: 0.0 if x > 10 else 1.0)
-    print "loading phase done"
+    print("loading phase done")
 
     t1 = [[1, 1, 1], [0, 1, 0], [0.1, 0.1, 0.1]]
     t2 = utils.transpose(t1)
@@ -69,9 +69,9 @@ def make_thin(im):
     usage = True
     while(usage):
         usage = apply_all_structures(loaded, thinners)
-        print "single thining phase done"
+        print("single thining phase done")
 
-    print "thining done"
+    print("thining done")
 
     utils.apply_to_each_pixel(loaded, lambda x: 255.0 * (1 - x))
     utils.load_pixels(im, loaded)
@@ -189,7 +189,7 @@ def chooseCore(cores, bsize):
     if len(sels) > 0:
         ib=0
         jb=0
-        for key, core in sels.iteritems():
+        for key, core in sels.items():
             ib+= core[1]
             jb += core[2]
         y = ib/len(sels)
@@ -201,7 +201,7 @@ def chooseCore(cores, bsize):
 
 def alignMinutias(core, minutiaes):
     if core is None:
-        print "No core to align!"
+        print("No core to align!")
         return minutiaes
     dir = core[0] #degree in radiant
     corex = core[1]
@@ -234,7 +234,7 @@ def alignMinutias(core, minutiaes):
 #not being used
 def alignBounds(core, bounds):
     if core is None:
-        print "No core to align!"
+        print("No core to align!")
         return bounds
     (minx, maxx, miny, maxy) = bounds
     points = [(0, 0), (0, maxy), (maxx, maxy), (maxx, 0)]
@@ -264,7 +264,7 @@ def matrixMultiply(X, Y):
     result = [[sum(a * b for a, b in zip(X_row, Y_col)) for Y_col in zip(*Y)] for X_row in X]
     return result
 def plotAndSaveMinutiae(minutiaes, name):
-    print "Plotting and saving minutiaes: ", name
+    print("Plotting and saving minutiaes: ", name)
     mins0 = [[m[0], m[1]] for m in minutiaes]
     data = np.array([
         mins0
@@ -325,7 +325,7 @@ def main1():
 
     W = int(args.block_size[0])
     #W = 16
-    print "Block-size: ", W
+    print("Block-size: ", W)
     singularity_type = None
 
     f = lambda x, y: 2 * x * y
@@ -344,26 +344,26 @@ def main1():
                 'image': finputminutia
             })
     ffirst_singularity = {}
-    print "Gabor filter, thinning, pointcare, extract minutias, alignment, exporting minutias to file ..."
+    print("Gabor filter, thinning, pointcare, extract minutias, alignment, exporting minutias to file ...")
     for file in files:
         i = file['i']
         j = file['j']
-        print "image: ", os.path.splitext(file['image'])
+        print("image: ", os.path.splitext(file['image']))
         base_image_name = os.path.splitext(os.path.basename(file['image']))[0]
         image_enhanced_loc = "/Users/Admin/fvs/samples/dumps2/" + base_image_name + "_enhanced.gif"
         image_enhanced_minutiae_loc = "/Users/Admin/fvs/samples/dumps2/" + base_image_name + "_enhanced_minutiaes.png"
         image_enhanced_minutiae_aligned_loc = "/Users/Admin/fvs/samples/dumps2/" + base_image_name + "_enhanced_minutiaes_aligned.png"
-        print "image enhanced: ", image_enhanced_loc
+        print("image enhanced: ", image_enhanced_loc)
         # f['image']
         if args.preprocess or os.path.isfile(image_enhanced_loc) == False:
-            print "Enhanced image does not exists. Enhancing."
+            print("Enhanced image does not exists. Enhancing.")
             im = Image.open(file['image'])
             im = im.convert("L")  # covert to grayscale
             # gabor filter
             angles = utils.calculate_angles(im, W, f, g)
-            print "calculating orientation done"
+            print("calculating orientation done")
             angles = utils.smooth_angles(angles)
-            print "smoothing angles done"
+            print("smoothing angles done")
             im = gabor(im, W, angles)
             # im.show()
 
@@ -375,14 +375,14 @@ def main1():
             if args.preprocess:
                 continue
         else:
-            print "Processing enhanced image."
+            print("Processing enhanced image.")
             im = Image.open(image_enhanced_loc)
             im = im.convert("L")  # covert to grayscale
         # continue
         # get image bounds
         (maxx, maxy) = im.size
         bounds = (0, maxx, 0, maxy)
-        print "bounds: ", bounds
+        print("bounds: ", bounds)
 
         angles = utils.calculate_angles(im, W, f, g)
         if args.smooth:
@@ -394,9 +394,9 @@ def main1():
             singularity_type = None
         result, cores = calculate_singularities(im, angles, int(args.tolerance[0]), W,
                                                 singularity_type=singularity_type)
-        print "cores: ", cores
+        print("cores: ", cores)
         core = chooseCore(cores, W)
-        print "Selected core: ", core
+        print("Selected core: ", core)
         if j == 1:
             ffirst_singularity[i] = core[3]
         # result.show()
@@ -407,21 +407,21 @@ def main1():
         # calculate minutias
         im, minutiaes = calculate_minutiaes(im)
         im.show()
-        print "minutias: ", minutiaes
+        print("minutias: ", minutiaes)
         # plotAndSaveMinutiae(minutiaes, image_enhanced_minutiae_loc)
         plotAndSaveMinutiasPIL(minutiaes, image_enhanced_minutiae_loc, im.size)
 
         minutiaes = alignMinutias(core, minutiaes)  # aligning
-        print "aminutia: ", minutiaes
+        print("aminutia: ", minutiaes)
         # plotAndSaveMinutiae(minutiaes, image_enhanced_minutiae_aligned_loc)
         plotAndSaveMinutiasPIL(minutiaes, image_enhanced_minutiae_aligned_loc, im.size)
 
         des = {'minutiaes': minutiaes, 'core': core, 'bounds': bounds}
-        print os.path.splitext(file['image'])[0]
+        print(os.path.splitext(file['image'])[0])
         dumpfilename = "/Users/Admin/fvs/samples/dumps2/" + os.path.basename(file['image']) + ".yaml"
         with open(dumpfilename, 'wb') as handle:
             json.dump(des, handle)
-        print ""
+        print("")
         if im is not None:
             im.close()
 
@@ -450,31 +450,31 @@ def main2():
 
     W = int(args.block_size[0])
     #W = 16
-    print "Block-size: ", W
+    print("Block-size: ", W)
     singularity_type = None
 
     f = lambda x, y: 2 * x * y
     g = lambda x, y: x ** 2 - y ** 2
 
     #print "Gabor filter and thinning, pointcare, extract minutias, alignment, exporting minutias to file ..."
-    print "image: ", os.path.splitext(imagepath)
+    print("image: ", os.path.splitext(imagepath))
     base_image_name = os.path.splitext(os.path.basename(imagepath))[0]
     image_enhanced_loc = os.path.splitext(imagepath)[0] + "_enhanced_thinned.gif"
     image_enhanced_minutiae_loc = os.path.splitext(imagepath)[0] + "_enhanced_thinned_minutiaes.png"
     image_enhanced_minutiae_aligned_loc = os.path.splitext(imagepath)[0] + "_enhanced_thinned_minutiaes_aligned.png"
     dumpfilename = os.path.splitext(imagepath)[0] + ".yaml"
-    print "image enhanced: ", image_enhanced_loc
+    print("image enhanced: ", image_enhanced_loc)
     # f['image']
     if args.preprocess or os.path.isfile(image_enhanced_loc) == False:
-        print "Enhanced image does not exists. Enhancing."
-        print "Gabor filtering and thinning ..."
+        print("Enhanced image does not exists. Enhancing.")
+        print("Gabor filtering and thinning ...")
         im = Image.open(imagepath)
         im = im.convert("L")  # covert to grayscale
         # gabor filter
         angles = utils.calculate_angles(im, W, f, g)
-        print "calculating orientation done"
+        print("calculating orientation done")
         angles = utils.smooth_angles(angles)
-        print "smoothing angles done"
+        print("smoothing angles done")
         im = gabor(im, W, angles)
         # im.show()
 
@@ -487,7 +487,7 @@ def main2():
             im.close()
             return
     else:
-        print "Processing enhanced image."
+        print("Processing enhanced image.")
         if im is not None:
             im.close()
     im = Image.open(image_enhanced_loc)
@@ -496,7 +496,7 @@ def main2():
     # get image bounds
     (maxx, maxy) = im.size
     bounds = (0, maxx, 0, maxy)
-    print "bounds: ", bounds
+    print("bounds: ", bounds)
 
     angles = utils.calculate_angles(im, W, f, g)
     if args.smooth:
@@ -505,9 +505,9 @@ def main2():
     singularity_type = None
     result, cores = calculate_singularities(im, angles, int(args.tolerance[0]), W,
                                             singularity_type=singularity_type)
-    print "cores: ", cores
+    print("cores: ", cores)
     core = chooseCore(cores, W)
-    print "Selected core: ", core
+    print("Selected core: ", core)
     # result.show()
 
     # align bounds with respect to the core
@@ -516,19 +516,19 @@ def main2():
     # calculate minutias
     im, minutiaes = calculate_minutiaes(im)
     im.show()
-    print "minutias: ", minutiaes
+    print("minutias: ", minutiaes)
     # plotAndSaveMinutiae(minutiaes, image_enhanced_minutiae_loc)
     plotAndSaveMinutiasPIL(minutiaes, image_enhanced_minutiae_loc, im.size)
 
     minutiaes = alignMinutias(core, minutiaes)  # aligning
-    print "aminutia: ", minutiaes
+    print("aminutia: ", minutiaes)
     # plotAndSaveMinutiae(minutiaes, image_enhanced_minutiae_aligned_loc)
     plotAndSaveMinutiasPIL(minutiaes, image_enhanced_minutiae_aligned_loc, im.size)
 
     des = {'minutiaes': minutiaes, 'core': core, 'bounds': bounds}
     with open(dumpfilename, 'wb') as handle:
         json.dump(des, handle)
-    print ""
+    print("")
     # break
     # im.show()
 

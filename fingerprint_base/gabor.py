@@ -28,7 +28,7 @@ def gabor(im, W, angles):
     im_load = im.load()
 
     freqs = frequency.freq(im, W, angles)
-    print "computing local ridge frequency done"
+    print("computing local ridge frequency done")
 
     gauss = utils.gauss_kernel(3)
     utils.apply_kernel(freqs, gauss)
@@ -63,10 +63,10 @@ if __name__ == "__main__":
     g = lambda x, y: x ** 2 - y ** 2
 
     angles = utils.calculate_angles(im, W, f, g)
-    print "calculating orientation done"
+    print("calculating orientation done")
 
     angles = utils.smooth_angles(angles)
-    print "smoothing angles done"
+    print("smoothing angles done")
 
     result = gabor(im, W, angles)
     result.show()
