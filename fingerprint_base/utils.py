@@ -42,7 +42,7 @@ def calculate_angles(im, W, f, g):
                     nominator += f(Gx, Gy)
                     denominator += g(Gx, Gy)
             angle = (math.pi + math.atan2(nominator, denominator)) / 2
-            result[(i - 1) / W].append(angle)
+            result[(i - 1) // W].append(angle)
 
     return result
 
@@ -71,9 +71,9 @@ def apply_kernel(pixels, kernel):
 
 def apply_kernel_with_f(pixels, kernel, f):
     size = len(kernel)
-    for i in range(size / 2, len(pixels) - size / 2):
-        for j in range(size / 2, len(pixels[i]) - size / 2):
-            pixels[i][j] = f(pixels[i][j], apply_kernel_at(lambda x, y: pixels[x][y], kernel, i, j))
+    for i in range(size // 2, len(pixels) - size // 2):
+        for j in range(size // 2, len(pixels[i]) - size // 2):
+            pixels[i][j] = f(pixels[i][j], apply_kernel_at(lambda x, y: pixels[int(x)][int(y)], kernel, int(i), int(j)))
 
 def smooth_angles(angles):
     cos_angles = copy.deepcopy(angles)

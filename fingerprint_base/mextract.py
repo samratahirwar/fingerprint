@@ -37,16 +37,12 @@ def gabor(im, W, angles):
     gauss = utils.gauss_kernel(3)
     utils.apply_kernel(freqs, gauss)
 
-    for i in range(1, x / W - 1):
-        for j in range(1, y / W - 1):
+    for i in range(1, x // W - 1):
+        for j in range(1, y // W - 1):
             kernel = gabor_kernel(W, angles[i][j], freqs[i][j])
             for k in range(0, W):
                 for l in range(0, W):
-                    im_load[i * W + k, j * W + l] = utils.apply_kernel_at(
-                        lambda x, y: im_load[x, y],
-                        kernel,
-                        i * W + k,
-                        j * W + l)
+                    im_load[i * W + k, j * W + l] = int(utils.apply_kernel_at(lambda x, y: im_load[x, y], kernel,i * W + k, j * W + l))
 
     return im
 

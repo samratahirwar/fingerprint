@@ -28,7 +28,7 @@ def apply_structure(pixels, structure, result):
 def apply_all_structures(pixels, structures):
     usage = False
     for structure in structures:
-        usage |= apply_structure(pixels, structure, utils.flatten(structure).count(1))
+        usage = apply_structure(pixels, structure, utils.flatten(structure).count(1))
 
     return usage
 
